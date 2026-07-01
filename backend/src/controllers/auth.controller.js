@@ -13,7 +13,7 @@ const Blacklist = require('../models/blacklist.model');
 
 const registerUser = async (req, res) => {
     const { username, email, password } = req.body;
-    if(!username || !email || !password) {
+    if (!username || !email || !password) {
         return res.status(400).json({ message: 'Username, email and password are required' });
     }
 
@@ -35,25 +35,28 @@ const registerUser = async (req, res) => {
         })
 
         const token = jwt.sign({
-            id: newUser._id, username: newUser.username }, 
+            id: newUser._id, username: newUser.username
+        },
             process.env.JWT_SECRET,
             { expiresIn: '1d' }
         );
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',});
-        
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        });
+
         res.status(201).json({
-                message: 'User registered successfully',
-                user: {
-                    id: newUser._id,
-                    username: newUser.username,
-                    email: newUser.email
-                }
+            message: 'User registered successfully',
+            user: {
+                id: newUser._id,
+                username: newUser.username,
+                email: newUser.email
+            }
         });
 
     }
-    catch (error) { 
+    catch (error) {
         console.error('Error registering user:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
@@ -66,11 +69,11 @@ const registerUser = async (req, res) => {
  * @access Public
  */
 const loginUser = async (req, res) => {
-    const { email, password } = req.body;   
-    if(!email || !password) {
+    const { email, password } = req.body;
+    if (!email || !password) {
         return res.status(400).json({ message: 'Email and password are required' });
     }
-    try{
+    try {
         const user = await userModel.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: 'Invalid email or password' });
@@ -82,26 +85,28 @@ const loginUser = async (req, res) => {
         }
 
         const token = jwt.sign({
-            id: user._id, username: user.username }, 
-            process.env.JWT_SECRET, 
-            {expiresIn: '1d'})
+            id: user._id, username: user.username
+        },
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' })
 
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         });
         res.status(200).json({
             message: 'User logged in successfully',
-            user:{
-                id:user._id,
+            user: {
+                id: user._id,
                 username: user.username,
                 email: user.email
             }
         });
 
-        
 
-    }catch (error) {   
+
+    } catch (error) {
         console.error('Error logging in user:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
@@ -114,7 +119,7 @@ const loginUser = async (req, res) => {
  */
 const logoutUser = async (req, res) => {
     const token = req.cookies.token;
-    if(token){
+    if (token) {
         await Blacklist.create({ token });
     }
     res.clearCookie('token');
@@ -126,7 +131,7 @@ const logoutUser = async (req, res) => {
  * @description gets the details of current user.
  * @access Private
  */
-const getme = async (req, res) =>{
+const getme = async (req, res) => {
     const user = await userModel.findById(req.user.id).select('-Password');
     res.status(200).json({
         message: "user details fetched successfully",
