@@ -4,12 +4,15 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
+    background-color: #eef1ef;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
     .form-container {
-        background-color: #2a2828;
+        background-color: #fbfcfb;
         padding: 2.5rem 2rem;
         border-radius: 14px;
-        border: 1px solid #3a3838;
+        border: 1px solid #dde3df;
+        box-shadow: 0 4px 16px rgba(20, 32, 26, 0.07);
         width: 100%;
         max-width: 420px;
 
@@ -18,7 +21,7 @@ main {
             font-weight: 600;
             text-align: center;
             margin-bottom: 1.8rem;
-            color: #f0f0f0;
+            color: #232b26;
         }
 
         form {
@@ -34,44 +37,48 @@ main {
                 label {
                     font-size: 0.85rem;
                     font-weight: 500;
-                    color: #a0a0a0;
+                    color: #7c877f;
                 }
 
                 input {
                     padding: 0.65rem 0.9rem;
-                    border: 1.5px solid #3a3838;
+                    border: 1.5px solid #dde3df;
                     border-radius: 8px;
                     font-size: 0.95rem;
-                    font-family: 'Poppins', sans-serif;
-                    color: #f0f0f0;
-                    background-color: #1e1c1c;
+                    font-family: inherit;
+                    color: #232b26;
+                    background-color: #f2f4f2;
                     outline: none;
                     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
                     &::placeholder {
-                        color: #555555;
+                        color: #a3aca6;
                     }
 
                     &:focus {
-                        border-color: #e8a838;
-                        box-shadow: 0 0 0 3px rgba(232, 168, 56, 0.12);
+                        border-color: #15803d;
+                        background-color: #fbfcfb;
+                        box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.1);
                     }
                 }
             }
         }
+
         .redirect-link {
             display: block;
             text-align: center;
             margin-top: 1rem;
             font-size: 0.85rem;
-            color: #a0a0a0;
+            color: #7c877f;
 
             a {
-                color: #e8a838;
+                color: #15803d;
                 text-decoration: none;
+                font-weight: 600;
 
                 &:hover {
                     text-decoration: underline;
+                    color: #166534;
                 }
             }
         }

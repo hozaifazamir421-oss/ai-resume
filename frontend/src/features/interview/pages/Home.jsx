@@ -2,15 +2,29 @@ import React, { useState, useRef } from 'react'
 import "../style/home.scss"
 import { useInterview } from '../hooks/useInterview.js'
 import { useNavigate } from 'react-router'
+import { useAuth } from "../../auth/hooks/useAuth.js"
 
 const Home = () => {
-
-    const { loading, generateReport,reports } = useInterview()
+    const { loading, generateReport, reports } = useInterview()
     const [ jobDescription, setJobDescription ] = useState("")
     const [ selfDescription, setSelfDescription ] = useState("")
+    
+    // NEW: State to hold the name of the uploaded file
+    const [ fileName, setFileName ] = useState("") 
+    
+    const { handleLogout } = useAuth();
     const resumeInputRef = useRef()
-
     const navigate = useNavigate()
+
+    // NEW: Function to handle file selection and update the UI
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFileName(file.name);
+        } else {
+            setFileName("");
+        }
+    }
 
     const handleGenerateReport = async () => {
         const resumeFile = resumeInputRef.current.files[ 0 ]
@@ -27,10 +41,20 @@ const Home = () => {
     }
 
     return (
-        <div className='home-page'>
+        // Added position: relative to the main container
+        <div className='home-page' style={{ position: 'relative', width: '100%', minHeight: '100vh' }}>
+
+            {/* NEW: Logout Button positioned top-right */}
+            <button 
+                onClick={handleLogout}
+                className='logout-btn'
+            >
+                Logout
+            </button>
 
             {/* Page Header */}
-            <header className='page-header'>
+            {/* Added padding-top to prevent header from overlapping with the absolute button on small screens */}
+            <header className='page-header' style={{ paddingTop: '60px' }}>
                 <h1>Create Your Custom <span className='highlight'>Interview Plan</span></h1>
                 <p>Let our AI analyze the job requirements and your unique profile to build a winning strategy.</p>
             </header>
@@ -66,7 +90,7 @@ const Home = () => {
                             <span className='panel__icon'>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
                             </span>
-                            <h2>Your Profile</h2>
+                            <h2>About You</h2>
                         </div>
 
                         {/* Upload Resume */}
@@ -75,13 +99,29 @@ const Home = () => {
                                 Upload Resume
                                 <span className='badge badge--best'>Best Results</span>
                             </label>
-                            <label className='dropzone' htmlFor='resume'>
-                                <span className='dropzone__icon'>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" /></svg>
+                            
+                            {/* UPDATED: Dynamic styling based on if a file is selected */}
+                            <label className='dropzone' htmlFor='resume' style={{ borderColor: fileName ? '#4ade80' : '', backgroundColor: fileName ? '#f0fdf4' : '' }}>
+                                <span className='dropzone__icon' style={{ color: fileName ? '#16a34a' : '' }}>
+                                    {/* Swap icon if file is uploaded */}
+                                    {fileName ? (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 16 12 12 8 16" /><line x1="12" y1="12" x2="12" y2="21" /><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" /></svg>
+                                    )}
                                 </span>
-                                <p className='dropzone__title'>Click to upload or drag &amp; drop</p>
-                                <p className='dropzone__subtitle'>PDF or DOCX (Max 5MB)</p>
-                                <input ref={resumeInputRef} hidden type='file' id='resume' name='resume' accept='.pdf,.docx' />
+                                
+                                {/* NEW: Display the file name if it exists, otherwise show default text */}
+                                <p className='dropzone__title' style={{ color: fileName ? '#16a34a' : '', fontWeight: fileName ? '600' : 'normal' }}>
+                                    {fileName ? fileName : 'Click to upload or drag & drop'}
+                                </p>
+                                
+                                <p className='dropzone__subtitle'>
+                                    {fileName ? 'Ready to generate' : 'PDF or DOCX (Max 5MB)'}
+                                </p>
+                                
+                                {/* NEW: Added onChange handler here */}
+                                <input onChange={handleFileChange} ref={resumeInputRef} hidden type='file' id='resume' name='resume' accept='.pdf,.docx' />
                             </label>
                         </div>
 
