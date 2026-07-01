@@ -1,13 +1,14 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:3000/api/auth',
+    baseURL: import.meta.env.VITE_API_BASE_URL,
     withCredentials: true,
 });
 
+
 export const register = async ({username, email, password})=>{
     try {
-        const response = await api.post('/register',
+        const response = await api.post('/api/auth/register',
              {username, email, password}
         );
         return response.data;
@@ -19,7 +20,7 @@ export const register = async ({username, email, password})=>{
 
 export const login = async ({email, password})=>{
     try {
-        const response = await api.post('/login',
+        const response = await api.post('/api/auth/login',
              {email, password}
         );
         return response.data;
@@ -30,7 +31,7 @@ export const login = async ({email, password})=>{
 
 export const logout = async ()=>{
     try {
-        const response = await api.post('/logout');
+        const response = await api.post('/api/auth/logout');
         return response.data;
     } catch (error) {
         console.log('Logout error:', error);
@@ -39,7 +40,7 @@ export const logout = async ()=>{
 
 export const getCurrentUser = async ()=>{
     try {
-        const response = await api.get('/get-me');
+        const response = await api.get('/api/auth/get-me');
         return response.data;
     } catch (error) {
         console.log('Get current user error:', error);
